@@ -21,7 +21,7 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
       alpha: true,
       antialias: true,
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
     renderer.setSize(w, h);
 
     const group = new THREE.Group();
@@ -85,7 +85,7 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
     );
     group.add(wire2);
 
-    const PCOUNT = 650;
+    const PCOUNT = 550;
     const positions = new Float32Array(PCOUNT * 3);
     for (let i = 0; i < PCOUNT; i++) {
       const r = 2.8 + Math.random() * 2.6;
@@ -113,11 +113,20 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
     let tmx = 0;
     let tmy = 0;
 
+    let allowMouse = true;
+
     const handleMouse = (event) => {
       tmx = (event.clientX / window.innerWidth - 0.5) * 2;
       tmy = (event.clientY / window.innerHeight - 0.5) * 2;
     };
     window.addEventListener("mousemove", handleMouse);
+    const handleScroll = () => {
+      allowMouse = window.scrollY < window.innerHeight * 0.8;
+    };
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
     const resize = () => {
       w = window.innerWidth;
@@ -148,11 +157,6 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
       frameId = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
       const state = orbStateRef?.current;
-      const signal = execSignalRef?.current;
-      const isInteractive = !!(
-        signal &&
-        (signal.hoverIndex >= 0 || signal.activeIndex >= 0)
-      );
 
       if (state) {
         target.scale = state.scale ?? HERO_DEFAULTS.scale;
@@ -175,30 +179,40 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
       current.cameraZ += (target.cameraZ - current.cameraZ) * L;
       current.groupY += (target.groupY - current.groupY) * L;
 
-      mx += (tmx - mx) * 0.04;
-      my += (tmy - my) * 0.04;
+      if (allowMouse) {
+        mx += (tmx - mx) * 0.04;
+        my += (tmy - my) * 0.04;
+      } else {
+        mx *= 0.92;
+        my *= 0.92;
+      }
 
-      const rotationBoost = isInteractive ? 0.08 : 0;
-      group.rotation.y = t * (0.09 + rotationBoost) + mx * 0.28;
-      group.rotation.x = my * 0.22;
-      points.rotation.y = -t * 0.05;
-      wire1.rotation.y = t * (isInteractive ? 0.09 : 0.04);
-      wire2.rotation.x = t * (isInteractive ? 0.07 : 0.03);
+      const rotationBoost = 0;
+      
 
-      const pulseBoost = isInteractive ? 0.08 : 0;
-      const pulse = 1 + Math.sin(t * 2.1) * (isInteractive ? 0.085 : 0.055);
+      const rotationSpeed = allowMouse ? 0.09 : 0.04;
+      const mouseInfluence = allowMouse ? 0.28 : 0.08;
+
+      group.rotation.y =
+        t * (rotationSpeed + rotationBoost) + mx * mouseInfluence;
+      group.rotation.x = my * (allowMouse ? 0.22 : 0.08);
+      points.rotation.y = -t * (allowMouse ? 0.05 : 0.02);
+      wire1.rotation.y = t * (allowMouse ? 0.04 : 0.02);
+
+      wire2.rotation.x = t * (allowMouse ? 0.03 : 0.015);
+      
+      const pulse = 1 + Math.sin(t * 2.1) * 0.055;
       core.scale.setScalar(pulse);
 
       group.scale.setScalar(current.scale);
       group.position.y = current.groupY;
       wire1.material.opacity = current.wire1Opacity;
       wire2.material.opacity = current.wire2Opacity;
-      points.material.opacity =
-        current.particleOpacity + (isInteractive ? 0.18 : 0);
-      glowSprite.scale.setScalar(
-        current.glowScale + Math.sin(t * 1.2) * 0.4 + (isInteractive ? 1.1 : 0),
-      );
-      core.material.opacity = 0.5 + (isInteractive ? 0.18 : 0);
+      points.material.opacity = current.particleOpacity;
+
+      glowSprite.scale.setScalar(current.glowScale + Math.sin(t * 1.2) * 0.4);
+
+      core.material.opacity = 0.5;
       camera.position.z = current.cameraZ;
 
       renderer.render(scene, camera);
@@ -210,7 +224,7 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
       cancelAnimationFrame(frameId);
       window.removeEventListener("mousemove", handleMouse);
       window.removeEventListener("resize", resize);
-
+      window.removeEventListener("scroll", handleScroll);
       glowTex.dispose();
       glowMat.dispose();
       coreGeo.dispose();
