@@ -15,8 +15,7 @@ export default function ExecutiveSection({ execSignalRef }) {
   const [activeExec, setActiveExec] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
   const [phaseLabel, setPhaseLabel] = useState("THE ORB GUIDES YOU FORWARD");
-  const [tiltStyles, setTiltStyles] = useState({});
-
+  
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 85%", "end 20%"],
@@ -44,11 +43,11 @@ export default function ExecutiveSection({ execSignalRef }) {
     else setPhaseLabel("LEADERSHIP SYNCHRONIZED");
   });
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    setHeadingVisible(v > 0.12);
+    setHeadingVisible(v > 0.04);
 
-    setVisibleRows([v > 0.08, v > 0.24, v > 0.42, v > 0.6]);
+    setVisibleRows([v > 0.06, v > 0.18, v > 0.3, v > 0.42]);
 
-    console.log("progress", v);
+    
   });
 
   useEffect(() => {
@@ -108,8 +107,8 @@ export default function ExecutiveSection({ execSignalRef }) {
             filter: headingVisible ? "blur(0px)" : "blur(12px)",
           }}
           transition={{
-            duration: 1.1,
-            ease: [0.16, 1, 0.3, 1],
+            duration: 0.65,
+            ease: [0.22, 1, 0.36, 1],
           }}
         >
           {" "}
@@ -119,7 +118,7 @@ export default function ExecutiveSection({ execSignalRef }) {
         <div className="exec-orb-anchor" aria-hidden="true" />
 
         <div className="exec-formation">
-          <AnimatePresence mode="sync">
+          <AnimatePresence initial={false}>
             {rowGroups.map((row, rowIndex) => {
               const isVisible = visibleRows[rowIndex];
 
@@ -165,22 +164,18 @@ export default function ExecutiveSection({ execSignalRef }) {
                         }
                         initial={{
                           opacity: 0,
-                          y: 70,
-                          scaleY: 0.7,
-                          scaleX: 0.92,
-                          filter: "blur(4px)",
+                          y: 30,
+                          scale: 0.96,
                         }}
                         animate={{
                           opacity: isVisible ? 1 : 0,
-                          y: isVisible ? 0 : -12,
-                          scaleY: isVisible ? 1 : 0.96,
-                          scaleX: isVisible ? 1 : 0.98,
-                          filter: isVisible ? "blur(0px)" : "blur(3px)",
+                          y: isVisible ? 0 : 20,
+                          scale: isVisible ? 1 : 0.98,
                         }}
                         transition={{
-                          duration: isVisible ? 0.55 : 0.3,
-                          delay: isVisible ? cardIndex * 0.08 : 0,
-                          ease: [0.16, 1, 0.3, 1],
+                          duration: isVisible ? 0.35 : 0.3,
+                          delay: isVisible ? cardIndex * 0.03 : 0,
+                          ease: [0.22, 1, 0.36, 1],
                         }}
                         onHoverEnd={handleHoverEnd}
                         onClick={() => handleSelect(exec, absoluteIndex)}
@@ -196,14 +191,13 @@ export default function ExecutiveSection({ execSignalRef }) {
                         <div className="exec-card-glow" />
                         <motion.div
                           className="exec-card-portrait"
-                          initial={{ opacity: 0, scale: 1.06 }}
+                          initial={{ opacity: 0 }}
                           animate={{
                             opacity: isVisible ? 1 : 0,
-                            scale: isVisible ? 1 : 1.04,
                           }}
                           transition={{
-                            duration: 0.6,
-                            delay: 0.3 + cardIndex * 0.08,
+                            duration: 0.35,
+                            delay: 0.08 + cardIndex * 0.03,
                           }}
                         >
                           <img src={exec.portrait} alt={exec.name} />
