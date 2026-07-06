@@ -4,27 +4,50 @@ import Hero from './components/Hero'
 import ExecutiveSection from './components/ExecutiveSection'
 import OrbCanvas from './components/OrbCanvas/OrbCanvas'
 import { useOrbState, useExecSignal } from './hooks/useOrbState'
+import { useLenis } from './hooks/useLenis'
 
 function App() {
   const [navbarScrolled, setNavbarScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const cursorGlowRef = useRef(null)
   const orbStateRef = useOrbState()
-
-  // Shared hover/active signal between the executive ring (DOM) and the
-  // orb's shard fragments (Three.js) — see useOrbState.js for details.
   const execSignalRef = useExecSignal()
 
+  // Initialize Lenis smooth scroll.
+  // autoRaf: false — Lenis is ticked from OrbCanvas's animate() loop
+  // via window.__LENIS__, keeping a single unified RAF.
+  useLenis()
+
+  // ── Navbar scroll state ──────────────────────────────────────────────────
+  // Performance fix: the original code was missing addEventListener entirely
+  // (only had removeEventListener in the cleanup). Additionally, setState on
+  // every scroll event is expensive. We use a ref to track the previous state
+  // and only call setState when it actually changes.
   useEffect(() => {
+    let prevScrolled = false
+
     const handleScroll = () => {
-      setNavbarScrolled(window.scrollY > 50)
+      const isScrolled = window.scrollY > 50
+      // Guard: only trigger setState when the value actually changes.
+      // Without this, every wheel tick causes a React re-render of App
+      // and everything it renders — significant overhead on touchpads.
+      if (isScrolled !== prevScrolled) {
+        prevScrolled = isScrolled
+        setNavbarScrolled(isScrolled)
+      }
     }
 
-    handleScroll()
-    
+    // Fix: addEventListener was missing in the original implementation.
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // Sync on mount for non-zero scroll positions
+
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // ── Cursor glow (RAF loop — intentionally separate from Three.js) ────────
+  // This loop is purely presentational and touches only one DOM element.
+  // It does NOT need to be synchronized with Lenis or Three.js.
+  // Merging it would complicate OrbCanvas without performance benefit.
   useEffect(() => {
     const cursorGlow = cursorGlowRef.current
     if (!cursorGlow) return
@@ -81,6 +104,7 @@ function App() {
     }
   }, [])
 
+  // ── Reveal observer ──────────────────────────────────────────────────────
   useEffect(() => {
     const revealElements = document.querySelectorAll('.reveal')
     const observer = new IntersectionObserver(

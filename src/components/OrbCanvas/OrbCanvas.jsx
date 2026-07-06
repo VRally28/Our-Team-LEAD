@@ -153,8 +153,15 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
     const clock = new THREE.Clock();
     let frameId;
 
-    function animate() {
+    function animate(time) {
       frameId = requestAnimationFrame(animate);
+
+      // Tick Lenis scroll physics in the same RAF frame as Three.js render.
+      // This is the key integration point — one loop, two jobs.
+      // window.__LENIS__ is set by useLenis() in App.jsx.
+      // time is DOMHighResTimeStamp provided by rAF — exactly what Lenis needs.
+      window.__LENIS__?.raf(time);
+
       const t = clock.getElapsedTime();
       const state = orbStateRef?.current;
 
