@@ -2,9 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import ExecutiveSection from './components/ExecutiveSection'
-import DepartmentSection from './components/DepartmentSection'
-import CTASection from './components/CTASection'
-import Footer from './components/Footer'
 import OrbCanvas from './components/OrbCanvas/OrbCanvas'
 import { useOrbState, useExecSignal } from './hooks/useOrbState'
 
@@ -24,7 +21,7 @@ function App() {
     }
 
     handleScroll()
-    window.addEventListener('scroll', handleScroll)
+    
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -104,6 +101,7 @@ function App() {
 
   return (
     <div className="app-shell">
+      
       <div className="cursor-glow" ref={cursorGlowRef} />
       <div className="bg-glow bg-glow-1" />
       <div className="bg-glow bg-glow-2" />
@@ -116,13 +114,10 @@ function App() {
       </div>
 
       <main>
+        
         <Hero />
         <ExecutiveSection execSignalRef={execSignalRef} />
-        <DepartmentSection />
-        <CTASection />
       </main>
-
-      <Footer />
     </div>
   )
 }
