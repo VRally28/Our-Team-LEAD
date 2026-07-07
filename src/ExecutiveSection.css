@@ -71,6 +71,12 @@
   row-gap: 135px;
 }
 
+/* Dim and subtly blur non-hovered cards */
+.exec-formation:has(.exec-card:hover) .exec-card-tilt-wrapper:not(:has(.exec-card:hover)) {
+  filter: blur(1px);
+  opacity: 0.85;
+}
+
 .exec-row {
   display: flex;
   justify-content: center;
@@ -122,6 +128,9 @@
   display: inline-flex;
   align-items: stretch;
   justify-content: stretch;
+
+  /* Smoothly animate sibling dimming on hover */
+  transition: filter 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ─── Card base ─────────────────────────────────────────────────────────── */
@@ -286,7 +295,7 @@
   text-transform: uppercase;
 }
 
-/* ─── Divider — Phase 3: width reveal (200–320ms) ──────────────────────── */
+/* ─── Divider — Phase 3: width reveal ───────────────────────────────────── */
 
 /* Divider parallax — horizontal only, 40% depth */
 .exec-card-divider {
@@ -302,16 +311,18 @@
   border-radius: 1px;
   transform: translate3d(var(--divider-tx, 0px), 0px, 0);
 
-  /* Reveal: width 0 → 100%, starts at 200ms, takes 120ms */
-  transition: width 0.14s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+  /* Exit transition: fast and immediate */
+  transition: width 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0s;
 }
 
 .exec-card:hover .exec-card-divider,
 .exec-card.is-hovered .exec-card-divider {
   width: 100%;
+  /* Enter transition: 0.05s delay */
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.05s;
 }
 
-/* ─── Social links — Phase 4: staggered slide-up + fade (320–450ms) ────── */
+/* ─── Social links — Phase 4: fluid staggered slide-up ─────────────────── */
 
 /* Socials container parallax — 45% depth */
 .exec-card-socials {
@@ -320,15 +331,18 @@
   gap: 6px;
   /* Reserve height so card doesn't jump. The links slide up from below */
   overflow: hidden;
-  /* The height opens via max-height so there's no reflow jump */
   max-height: 0;
-  transition: max-height 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+  
+  /* Exit transition: fast and immediate */
+  transition: max-height 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0s;
   transform: translate3d(var(--socials-tx, 0px), var(--socials-ty, 0px), 0);
 }
 
 .exec-card:hover .exec-card-socials,
 .exec-card.is-hovered .exec-card-socials {
   max-height: 80px;
+  /* Enter transition: opens fluidly, no delay */
+  transition: max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0s;
 }
 
 /* Individual social link */
@@ -348,27 +362,32 @@
   opacity: 0;
   transform: translateY(6px);
 
-  /* Slide-up + fade */
+  /* Exit transition: fast and immediate */
   transition:
-    opacity 0.2s ease-out,
-    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-    color 0.18s ease-out;
+    opacity 0.15s ease-out 0s,
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0s,
+    color 0.18s ease-out 0s;
 }
 
-/* GitHub link: appears first (320ms into hover) */
-.exec-social-gh {
-  transition-delay: 0.32s, 0.32s, 0s;
-}
-
-/* LinkedIn link: 20ms stagger after GitHub (340ms) */
-.exec-social-li {
-  transition-delay: 0.34s, 0.34s, 0s;
-}
-
-.exec-card:hover .exec-social-link,
-.exec-card.is-hovered .exec-social-link {
+/* Hover-in transitions defined specifically for the hover state to remove exit delays */
+.exec-card:hover .exec-social-gh,
+.exec-card.is-hovered .exec-social-gh {
   opacity: 1;
   transform: translateY(0);
+  transition:
+    opacity 0.25s ease-out 0.08s,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
+    color 0.18s ease-out 0s;
+}
+
+.exec-card:hover .exec-social-li,
+.exec-card.is-hovered .exec-social-li {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.25s ease-out 0.12s,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
+    color 0.18s ease-out 0s;
 }
 
 /* Icon hover — slight rightward nudge + accent color */
