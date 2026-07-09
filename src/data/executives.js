@@ -1,7 +1,6 @@
 // executives.js — Data-driven executive roster
 // Replace portrait paths with your actual image assets
-import yuvrajSil from "../assets/silhouettes/yuvraj.png";
-import ishitaSil from "../assets/silhouettes/ishita.png";
+
 export const executives = [
   {
     id: 1,
