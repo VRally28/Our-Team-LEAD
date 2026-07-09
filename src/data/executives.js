@@ -1,14 +1,12 @@
 // executives.js — Data-driven executive roster
 // Replace portrait paths with your actual image assets
-import yuvrajSil from "../assets/silhouettes/yuvraj.png";
-import ishitaSil from "../assets/silhouettes/ishita.png";
+
 export const executives = [
   {
     id: 1,
     firstName: "Yuvraj",
     name: "Yuvraj Malik",
     role: "Technical Secretary",
-    silhouette: yuvrajSil,
     portrait: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80",
     statement: "Technology should feel invisible and inevitable. I build systems that just work.",
     github: "yuvraj-malik",
@@ -29,7 +27,6 @@ export const executives = [
     firstName: "Ishita",
     name: "Ishita Sachdeva",
     role: "General Secretary",
-    silhouette: ishitaSil,
     portrait: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80",
     statement: "Building bridges between vision and execution — every initiative is a chance to move the needle.",
     github: "ishita-sachdeva",
