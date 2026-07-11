@@ -639,4 +639,36 @@
   .exec-card-tilt-wrapper {
     transform: none;
   }
+
+  /*
+    Bug fix — socials sometimes visible on a card while scrolling on touch
+    devices.
+
+    Root cause: touch browsers apply the native CSS :hover pseudo-class on
+    tap/touchstart and don't reliably clear it until a tap elsewhere — a
+    well-documented "sticky hover" quirk, most visible when a scroll gesture
+    begins with a touch down on a card (commonly the last card under the
+    finger, e.g. the right card in a row). This is NOT React/Framer state:
+    Framer Motion's hover gesture (motion-dom's hover()) already explicitly
+    ignores pointerType "touch" for onHoverStart/onHoverEnd, so `.is-hovered`
+    never gets set on touch — only the bare `:hover` selectors below were
+    unguarded for this device class, the same class of issue the sibling-dim
+    rule above was already patched for.
+
+    Fix: on devices that have no true hover capability, force the
+    :hover-driven reveal states back to their resting (hidden) values so a
+    stuck native :hover can never make the social links visible.
+  */
+  .exec-card:hover .exec-card-socials,
+  .exec-card.is-hovered .exec-card-socials {
+    max-height: 0;
+  }
+
+  .exec-card:hover .exec-social-gh,
+  .exec-card:hover .exec-social-li,
+  .exec-card.is-hovered .exec-social-gh,
+  .exec-card.is-hovered .exec-social-li {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
