@@ -58,7 +58,14 @@ const LinkedInIcon = () => (
 // portrait, and layoutId) would re-render on every one of those ticks even
 // though their own props rarely change. onSelect is stabilized with
 // useCallback below so its reference doesn't defeat this memoization.
-const ExecCard = memo(function ExecCard({ exec, absoluteIndex, isVisible, isActive, isDimmed, onSelect }) {
+const ExecCard = memo(function ExecCard({
+  exec,
+  absoluteIndex,
+  isVisible,
+  isActive,
+  isDimmed,
+  onSelect,
+}) {
   const [hovered, setHovered] = useState(false);
 
   // 3D tilt hook — attaches to the wrapper div, not the motion.button.
@@ -108,9 +115,17 @@ const ExecCard = memo(function ExecCard({ exec, absoluteIndex, isVisible, isActi
           layoutId={`exec-portrait-${exec.id}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ duration: 0.35, delay: 0.08 + (absoluteIndex % 4) * 0.03 }}
+          transition={{
+            duration: 0.35,
+            delay: 0.08 + (absoluteIndex % 4) * 0.03,
+          }}
         >
-          <img src={exec.portrait} alt={exec.name} />
+          <img
+            src={exec.portrait}
+            alt={exec.name}
+            loading="lazy"
+            decoding="async"
+          />
         </motion.div>
 
         {/*
@@ -172,7 +187,6 @@ const ExecCard = memo(function ExecCard({ exec, absoluteIndex, isVisible, isActi
     </div>
   );
 });
-
 
 /* ─── Executive section ─────────────────────────────────────────────────── */
 export default function ExecutiveSection({ execSignalRef }) {
@@ -259,10 +273,13 @@ export default function ExecutiveSection({ execSignalRef }) {
   // re-renders — required for the ExecCard memoization above to actually
   // prevent re-renders (a new function reference every render would
   // otherwise defeat React.memo's prop comparison).
-  const handleSelect = useCallback((exec, index) => {
-    setActiveExec(exec);
-    if (execSignalRef?.current) execSignalRef.current.activeIndex = index;
-  }, [execSignalRef]);
+  const handleSelect = useCallback(
+    (exec, index) => {
+      setActiveExec(exec);
+      if (execSignalRef?.current) execSignalRef.current.activeIndex = index;
+    },
+    [execSignalRef],
+  );
 
   const handleClose = () => {
     setActiveExec(null);
