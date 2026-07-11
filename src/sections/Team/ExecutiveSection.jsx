@@ -7,10 +7,10 @@ import {
   AnimatePresence,
   LayoutGroup,
 } from "framer-motion";
-import { executives } from "../data/executives";
+import { executives } from "../../data/teamData";
 import ProfilePanel from "./ProfilePanel";
-import { useCardTilt } from "../hooks/useCardTilt";
-import "../ExecutiveSection.css";
+import { useCardTilt } from "./hooks/useCardTilt";
+import "./ExecutiveSection.css";
 
 // Checked once at module level — no per-render overhead.
 // The result is stable for the lifetime of the page.

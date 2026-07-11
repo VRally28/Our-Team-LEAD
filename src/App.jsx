@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import ExecutiveSection from './components/ExecutiveSection'
+import TeamSection from './sections/Team'
 import OrbCanvas from './components/OrbCanvas/OrbCanvas'
-import { useOrbState, useExecSignal } from './hooks/useOrbState'
-import { useLenis } from './hooks/useLenis'
+import { useOrbState, useExecSignal } from './sections/Team/hooks/useOrbState'
+import { useLenis } from './sections/Team/hooks/useLenis'
 
 function App() {
   const [navbarScrolled, setNavbarScrolled] = useState(false)
@@ -138,9 +137,7 @@ function App() {
       </div>
 
       <main>
-        
-        <Hero />
-        <ExecutiveSection execSignalRef={execSignalRef} />
+        <TeamSection execSignalRef={execSignalRef} />
       </main>
     </div>
   )
