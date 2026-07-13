@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import TeamHero from './TeamHero';
 import ExecutiveSection from './ExecutiveSection';
-import OrbCanvas from './OrbCanvas/OrbCanvas';
+import OrbCanvas from '../../components/OrbCanvas/OrbCanvas';
 import { useOrbState, useExecSignal } from './hooks/useOrbState';
 
 export default function TeamSection() {
