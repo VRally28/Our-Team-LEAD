@@ -39,6 +39,18 @@ import {
 } from "framer-motion";
 import "./ProfilePanel.css";
 
+/**
+ * linkedInHref — normalise exec.linkedin into a valid URL.
+ * Handles both a bare handle ("yuvraj-malik") and a full URL
+ * ("https://www.linkedin.com/in/...") stored in the data layer.
+ */
+function linkedInHref(value) {
+  if (!value) return "#";
+  return value.startsWith("http")
+    ? value
+    : `https://www.linkedin.com/in/${value}`;
+}
+
 /* ─── SVG Icons ──────────────────────────────────────────────────────────── */
 
 const GitHubIcon = () => (
@@ -496,7 +508,7 @@ export default function ProfilePanel({ exec, onClose }) {
                 )}
                 {exec.linkedin && (
                   <a
-                    href={`https://linkedin.com/in/${exec.linkedin}`}
+                    href={linkedInHref(exec.linkedin)}
                     className="epm-social-row"
                     target="_blank"
                     rel="noopener noreferrer"
