@@ -387,6 +387,7 @@ export default function ProfilePanel({ exec, onClose }) {
                 alt={`Portrait of ${exec.name}`}
                 className="epm-portrait-img"
                 draggable="false"
+                style={exec.portraitPosition ? { objectPosition: exec.portraitPosition } : undefined}
               />
             </motion.div>
           </motion.div>
